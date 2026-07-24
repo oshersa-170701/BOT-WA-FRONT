@@ -1,0 +1,7 @@
+{
+  "name": "whatsapp-bot-admin",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
