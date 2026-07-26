@@ -1,16 +1,21 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar class="quotes-toolbar">
+  <ion-toolbar class="settings-toolbar">
     <ion-buttons slot="start">
       <ion-button routerLink="/dashboard" class="back-btn">
         <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
       </ion-button>
     </ion-buttons>
 
-    <ion-title class="ion-text-center" style="font-weight: 800; color: #ffffff;">
-      Gestión de Cotizaciones
+    <ion-title class="ion-text-center settings-main-title">
+      Gestion Cotizaciones
     </ion-title>
+
+    <ion-buttons slot="end" class="hidden-slot">
+      <ion-button></ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
 
 <ion-content class="ion-padding quotes-background">
   <div class="table-container">

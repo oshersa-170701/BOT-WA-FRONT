@@ -108,6 +108,15 @@
       background: rgba(14, 165, 233, 0.12);
       color: #0ea5e9;
     }
+    
+    &.whatsapp-glow {
+      background: rgba(102, 233, 14, 0.12);
+      color: #78e90e;
+    }
+    &.asociados-glow {
+      background: rgba(233, 156, 14, 0.12);
+      color: #e9710e;
+    }
   }
 
   .card-content {
@@ -304,18 +313,5 @@ ion-fab {
   ion-icon {
     font-size: 24px;
     color: #ffffff;
-  }
-}
-.profile-modal-custom {
-  --height: auto;
-  --max-height: 480px;
-  --width: 100%;
-  --max-width: 420px;
-  --border-radius: 24px 24px 0 0;
-  --background: #0f172a;
-  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
-
-  @media (min-width: 768px) {
-    --border-radius: 24px;
   }
 }

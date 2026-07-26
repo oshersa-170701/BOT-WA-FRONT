@@ -3,7 +3,22 @@
   --color: #ffffff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+.settings-toolbar {
+  --background: rgba(15, 23, 42, 0.9) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
+  .back-btn {
+    --color: #ffffff;
+    font-weight: 2000;
+  }
+
+  /* Controlamos el tamaño de los iconos de la barra superior aquí */
+  ion-icon {
+    font-size: 24px !important; /* Puedes ajustarlo a 22px, 26px, etc. según te guste */
+  }
+}
 .quotes-background {
   --background: #0f172a;
 }

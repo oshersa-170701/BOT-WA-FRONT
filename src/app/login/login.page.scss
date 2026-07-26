@@ -24,15 +24,20 @@
 
   .icon-glow {
     display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 16px;
     background: rgba(124, 58, 237, 0.2);
     border-radius: 50%;
     margin-bottom: 12px;
     box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
 
-    ion-icon {
-      font-size: 48px;
-      color: #a78bfa;
+    // Estilo adaptado para tu logotipo conservando el brillo
+    .logo-image {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      border-radius: 50%;
     }
   }
 

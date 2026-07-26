@@ -7,7 +7,7 @@ import {
 } from "@ionic/angular/standalone";
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { chatbubblesOutline, logOutOutline, cubeOutline, optionsOutline, chevronForwardOutline, personOutline, documentTextOutline, peopleOutline } from 'ionicons/icons';
+import { chatbubblesOutline, logOutOutline, cubeOutline, optionsOutline, chevronForwardOutline, personOutline, documentTextOutline, peopleOutline, logoWhatsapp } from 'ionicons/icons';
 import { ProfileComponent } from '../profile/profile.component';
 
 @Component({
@@ -26,7 +26,7 @@ export class DashboardPage implements OnInit {
   currentUser: any = { name: 'Usuario', email: 'correo@empresa.com' };
 
   constructor(private router: Router, private modalController: ModalController) {
-    addIcons({logOutOutline,chatbubblesOutline,cubeOutline,chevronForwardOutline,optionsOutline,documentTextOutline,peopleOutline,personOutline});
+    addIcons({logOutOutline,chatbubblesOutline,cubeOutline,chevronForwardOutline,logoWhatsapp,documentTextOutline,peopleOutline,personOutline,optionsOutline});
   }
 
   ngOnInit() {

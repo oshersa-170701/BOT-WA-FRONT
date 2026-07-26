@@ -12,7 +12,7 @@
 
     <!-- Botón para subir Excel -->
     <ion-buttons slot="end">
-      <ion-button (click)="fileInput.click()" title="Subir Catálogo en Excel" style="color: #ffffff;">
+      <ion-button (click)="fileInput.click()" title="Subir Catálogo en Excel" class="back-btn">
         <ion-icon name="cloud-upload-outline" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -33,79 +33,81 @@
   <div class="table-container">
 
     @if (filteredProducts.length === 0) {
-      <div class="empty-state">
-        <ion-icon name="cube-outline"></ion-icon>
-        <p>No se encontraron productos registrados.</p>
-      </div>
+    <div class="empty-state">
+      <ion-icon name="cube-outline"></ion-icon>
+      <p>No se encontraron productos registrados.</p>
+    </div>
     }
 
     <!-- Tabla de productos moderna -->
     @if (paginatedProducts.length > 0) {
-      <div class="table-responsive">
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Marca</th>
-              <th>Categoria</th>
-              <th>Precio</th>
-              <th>Stock</th>
-              <th>Unidad</th>
-              <th>Descripción</th>
-              <th>Imagen</th>
-              <th class="text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (p of paginatedProducts; track p.id) {
-              <tr>
-                <td>#{{ p.id }}</td>
-                <td style="font-weight: 600; color: #1e293b;">{{ p.name }}</td>
-                <td>{{ p.brand || 'N/A' }}</td>
-                <td>{{ p.category || 'N/A' }}</td>
-                <td style="color: #10b981; font-weight: bold;">${{ p.price }}</td>
-                <td>
-                  <span class="stock-badge" [ngClass]="{'low-stock': p.stock <= 5}">
-                    {{ p.stock }}
-                  </span>
-                </td>
-                <td>{{ p.unit }}</td>
-                <td>{{ p.description || 'N/A' }}</td>
-                <td>
-                  <img [src]="p.image_url || 'https://via.placeholder.com/40?text=Sin+Foto'"
-                    style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;" alt="Prod">
-                </td>
-                <td class="text-center">
-                  <div class="action-buttons">
-                    <ion-button fill="clear" size="small" color="primary" (click)="openEditModal(p)" title="Editar">
-                      <ion-icon name="create-outline" slot="icon-only"></ion-icon>
-                    </ion-button>
-                    <ion-button fill="clear" size="small" color="danger" (click)="confirmDelete(p)" title="Eliminar">
-                      <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-                    </ion-button>
-                  </div>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+    <div class="table-responsive">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Marca</th>
+            <th>Categoria</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Unidad</th>
+            <th>Descripción</th>
+            <th>Imagen</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of paginatedProducts; track p.id) {
+          <tr>
+            <td>#{{ p.id }}</td>
+            <td style="font-weight: 600; color: #1e293b;">{{ p.name }}</td>
+            <td>{{ p.brand || 'N/A' }}</td>
+            <td>{{ p.category || 'N/A' }}</td>
+            <td style="color: #10b981; font-weight: bold;">${{ p.price }}</td>
+            <td>
+              <span class="stock-badge" [ngClass]="{'low-stock': p.stock <= 5}">
+                {{ p.stock }}
+              </span>
+            </td>
+            <td>{{ p.unit }}</td>
+            <td>{{ p.description || 'N/A' }}</td>
+            <td>
+              <img [src]="p.image_url || 'assets/shapes.svg'"
+  (error)="p.image_url = 'assets/shapes.svg'"
+  style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;" alt="Prod">
+            </td>
+            <td class="text-center">
+              <div class="action-buttons">
+                <ion-button fill="clear" size="small" color="primary" (click)="openEditModal(p)" title="Editar">
+                  <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" size="small" color="danger" (click)="confirmDelete(p)" title="Eliminar">
+                  <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
 
-        <!-- Controles de Paginación Elegantes -->
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 8px; background: #ffffff; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
-          <ion-button size="small" fill="outline" (click)="prevPage()" [disabled]="currentPage === 1">
-            Anterior
-          </ion-button>
-          
-          <span style="font-size: 13px; font-weight: 600; color: #64748b;">
-            Página {{ currentPage }} de {{ totalPages }}
-          </span>
+      <!-- Controles de Paginación Elegantes -->
+      <div
+        style="display: flex; justify-content: space-between; align-items: center; padding: 16px 8px; background: #ffffff; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+        <ion-button size="small" fill="outline" (click)="prevPage()" [disabled]="currentPage === 1">
+          Anterior
+        </ion-button>
 
-          <ion-button size="small" fill="outline" (click)="nextPage()" [disabled]="currentPage >= totalPages">
-            Siguiente
-          </ion-button>
-        </div>
+        <span style="font-size: 13px; font-weight: 600; color: #64748b;">
+          Página {{ currentPage }} de {{ totalPages }}
+        </span>
+
+        <ion-button size="small" fill="outline" (click)="nextPage()" [disabled]="currentPage >= totalPages">
+          Siguiente
+        </ion-button>
       </div>
+    </div>
     }
 
   </div> <!-- Cierre correcto de table-container -->
@@ -117,12 +119,8 @@
     </ion-fab-button>
   </ion-fab>
 
-  <ion-alert
-    [isOpen]="isAlertOpen"
-    mode="ios"
-    header="¿Estás seguro?"
-    message="Esta acción eliminará el producto permanentemente de la base de datos."
-    [buttons]="alertButtons"
+  <ion-alert [isOpen]="isAlertOpen" mode="ios" header="¿Estás seguro?"
+    message="Esta acción eliminará el producto permanentemente de la base de datos." [buttons]="alertButtons"
     (didDismiss)="isAlertOpen = false">
   </ion-alert>
 </ion-content>
