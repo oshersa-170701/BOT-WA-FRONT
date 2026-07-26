@@ -150,24 +150,43 @@ botSetting = {
 
   generateWhatsAppQR() {
     this.isLoadingQr = true;
-    this.botStatus = 'Generando código QR...';
+    this.botStatus = 'Iniciando conexión con WhatsApp...';
 
-    this.http.get<any>(`${this.whatsappApi}/qr/${this.whatsappPhone}`).subscribe({
-      next: (res) => {
-        this.isLoadingQr = false;
-        if (res && res.qr) {
-          this.qrCodeImage = res.qr;
-          this.botStatus = 'Escanea el código QR con tu WhatsApp';
-        } else {
-          this.botStatus = 'Conectado / Sesión Activa';
+    // Función interna de reintento automático (Polling)
+    const fetchQrWithRetry = (attempts = 0) => {
+      this.http.get<any>(`${this.whatsappApi}/qr/${this.whatsappPhone}`).subscribe({
+        next: (res) => {
+          if (res && res.qr) {
+            // ¡Éxito! Ya se generó el QR
+            this.isLoadingQr = false;
+            this.qrCodeImage = res.qr;
+            this.botStatus = 'Escanea el código QR con tu WhatsApp';
+          } else if (attempts < 6) {
+            // Si el backend sigue procesando, reintentamos automáticamente en 2 segundos
+            this.botStatus = `Generando código QR (Intento ${attempts + 1}/6)...`;
+            setTimeout(() => fetchQrWithRetry(attempts + 1), 2000);
+          } else {
+            // Si pasan los intentos y no responde
+            this.isLoadingQr = false;
+            this.botStatus = 'El servidor tardó demasiado. Intenta de nuevo.';
+            this.showToast('Tiempo de espera agotado al generar el QR', 'warning');
+          }
+        },
+        error: () => {
+          if (attempts < 4) {
+            // Si da error de red temporal mientras arranca el navegador, reintentamos
+            setTimeout(() => fetchQrWithRetry(attempts + 1), 2500);
+          } else {
+            this.isLoadingQr = false;
+            this.botStatus = 'Error al conectar con WhatsApp';
+            this.showToast('No se pudo obtener el código QR del servidor', 'danger');
+          }
         }
-      },
-      error: () => {
-        this.isLoadingQr = false;
-        this.botStatus = 'Error al conectar con WhatsApp';
-        this.showToast('No se pudo obtener el código QR del servidor', 'danger');
-      }
-    });
+      });
+    };
+
+    // Disparamos el primer intento
+    fetchQrWithRetry();
   }
 
   disconnectWhatsApp() {
