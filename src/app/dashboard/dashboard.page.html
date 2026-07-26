@@ -1,0 +1,72 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="dashboard-toolbar">
+    <!-- Botón invisible para equilibrar el espacio izquierdo con el de la derecha -->
+    <ion-buttons slot="start" style="visibility: hidden;">
+      <ion-button>
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <!-- Título perfectamente centrado con su badge -->
+    <ion-title class="ion-text-center" style="font-weight: 800; color: #ffffff; font-size: 18px;">
+      <span class="inline-brand">
+        <ion-icon name="chatbubbles-outline"></ion-icon>
+        Admin Bot WA
+      </span>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding dashboard-background">
+  <div class="dashboard-wrapper">
+    
+    <div class="dashboard-welcome">
+      <h2>Panel de Control</h2>
+      <p>Selecciona una sección para administrar tu asistente automatizado</p>
+    </div>
+
+    <ion-grid>
+      <ion-row>
+        <!-- Tarjeta de Gestión de Productos -->
+        <ion-col size="12" size-md="6">
+          <ion-card class="menu-card" routerLink="/dashboard/products">
+            <div class="card-icon-box product-glow">
+              <ion-icon name="cube-outline"></ion-icon>
+            </div>
+            <div class="card-content">
+              <h3>Gestión de Productos</h3>
+              <p>Agrega, edita y administra miles de artículos, precios y stock para las cotizaciones automáticas.</p>
+            </div>
+            <div class="card-arrow">
+              <ion-icon name="chevron-forward-outline"></ion-icon>
+            </div>
+          </ion-card>
+        </ion-col>
+
+        <!-- Tarjeta de Configuración del Bot -->
+        <ion-col size="12" size-md="6">
+          <ion-card class="menu-card" routerLink="/dashboard/settings">
+            <div class="card-icon-box settings-glow">
+              <ion-icon name="options-outline"></ion-icon>
+            </div>
+            <div class="card-content">
+              <h3>Configuración del Bot</h3>
+              <p>Personaliza el nombre del asistente, mensajes predeterminados y palabras clave automáticas.</p>
+            </div>
+            <div class="card-arrow">
+              <ion-icon name="chevron-forward-outline"></ion-icon>
+            </div>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+  </div>
+</ion-content>
+
+<!-- Botón Flotante (FAB) Perfeccionado -->
+<ion-fab vertical="bottom" horizontal="end" slot="fixed" style="margin: 24px;">
+  <ion-fab-button (click)="openProfileModal()" class="profile-fab-btn">
+    <ion-icon name="person-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

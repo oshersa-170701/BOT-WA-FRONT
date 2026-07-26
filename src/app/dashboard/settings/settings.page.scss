@@ -1,0 +1,140 @@
+:host {
+  --ion-background-color: #0f172a;
+}
+
+.settings-toolbar {
+  --background: rgba(15, 23, 42, 0.9) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  .back-btn {
+    --color: #a78bfa;
+    font-weight: 2000;
+  }
+}
+
+.settings-background {
+  --background: linear-gradient(135deg, #090d16 0%, #1e1b4b 100%) !important;
+}
+
+.settings-wrapper {
+  max-width: 700px;
+  margin: 10px auto;
+  padding: 10px;
+}
+
+.custom-card {
+  background: #ffffff !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+
+  .card-header-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 12px;
+
+    ion-icon {
+      font-size: 24px;
+      color: #7c3aed;
+      background: rgba(124, 58, 237, 0.12);
+      padding: 8px;
+      border-radius: 10px;
+    }
+
+    h3 {
+      font-weight: 700;
+      color: #1e293b !important;
+      font-size: 18px;
+      margin: 0;
+    }
+  }
+}
+
+.mb-2 {
+  margin-bottom: 12px;
+}
+
+.mb-3 {
+  margin-bottom: 16px;
+}
+
+// Forzamos colores oscuros y legibles en los inputs y selects de Ionic
+ion-item {
+  --background: #f8fafc !important;
+  background: #f8fafc !important;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  margin-bottom: 16px;
+  --highlight-color-focused: #7c3aed;
+  
+  ion-input, ion-textarea, ion-select {
+    --color: #1e293b !important;
+    --placeholder-color: #64748b !important;
+    color: #1e293b !important;
+  }
+
+  // Aseguramos que las etiquetas apiladas tengan buen contraste
+  ion-label {
+    color: #475569 !important;
+    font-weight: 600 !important;
+  }
+}
+
+.primary-btn {
+  margin-top: 10px;
+  height: 48px;
+  font-weight: bold;
+  --background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  --box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+  color: #ffffff !important;
+}
+
+.danger-btn {
+  margin-top: 10px;
+  height: 48px;
+  font-weight: bold;
+  --background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  --box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+  color: #ffffff !important;
+}
+
+.secondary-btn {
+  margin-top: 10px;
+  height: 48px;
+  font-weight: bold;
+  --background: linear-gradient(135deg, #3a5eed 0%, #3a5eed 100%);
+  --box-shadow: 0 4px 15px rgba(58, 112, 237, 0.4);
+  color: #ffffff !important;
+}
+.new-keyword-box {
+  background: #f1f5f9;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px dashed #94a3b8;
+}
+
+.keyword-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 8px;
+
+  .kw-badge {
+    background: rgba(124, 58, 237, 0.1);
+    color: #7c3aed;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 13px;
+  }
+}

@@ -1,0 +1,52 @@
+<ion-content class="ion-padding" style="--background: #0f172a;">
+  <div class="profile-modal-container">
+    
+    <!-- Contenido superior -->
+    <div>
+      <div class="modal-header-custom">
+        <h2>Mi Perfil</h2>
+        <ion-button fill="clear" class="close-btn" (click)="dismiss()">
+          <ion-icon name="close-outline" size="large"></ion-icon>
+        </ion-button>
+      </div>
+
+      <div class="profile-info-container">
+        <div class="profile-avatar-glow">
+          {{ user.name ? user.name.charAt(0).toUpperCase() : 'U' }}
+        </div>
+        <h3>{{ user.name }}</h3>
+        <p>Administrador de Empresa</p>
+      </div>
+
+      <div class="profile-details-card">
+        <div class="detail-row">
+          <div class="detail-icon-box">
+            <ion-icon name="mail-outline"></ion-icon>
+          </div>
+          <div class="detail-text">
+            <span>Correo Electrónico</span>
+            <h4>{{ user.email }}</h4>
+          </div>
+        </div>
+      </div>
+        <div class="profile-details-card">
+        <div class="detail-row">
+          <div class="detail-icon-box">
+            <ion-icon name="call-outline"></ion-icon>
+          </div>
+          <div class="detail-text">
+            <span>Numero de Teléfono</span>
+            <h4>{{ user.whatsapp_phone }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón de Cerrar Sesión ordenado -->
+    <ion-button expand="block" shape="round" color="danger" (click)="logout()" class="modal-logout-btn">
+      <ion-icon name="log-out-outline" slot="start"></ion-icon>
+      Cerrar Sesión
+    </ion-button>
+
+  </div>
+</ion-content>

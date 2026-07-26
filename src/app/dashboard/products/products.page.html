@@ -1,0 +1,99 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="products-toolbar">
+    <ion-buttons slot="start">
+      <ion-button routerLink="/dashboard" class="back-btn">
+        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title class="ion-text-center" style="font-weight: 800; color: #ffffff;">
+      Gestión de Productos
+    </ion-title>
+
+    <ion-buttons slot="end" style="visibility: hidden;">
+      <ion-button></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- Barra de búsqueda -->
+  <ion-toolbar class="search-toolbar">
+    <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="filterProducts()"
+      placeholder="Buscar por nombre, marca o SKU..." mode="ios" animated="true">
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding products-background">
+  <div class="table-container">
+
+    <div *ngIf="filteredProducts.length === 0" class="empty-state">
+      <ion-icon name="cube-outline"></ion-icon>
+      <p>No se encontraron productos registrados.</p>
+    </div>
+
+    <!-- Tabla de productos moderna -->
+    <div class="table-responsive" *ngIf="filteredProducts.length > 0">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Marca</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Unidad</th>
+            <th>Descripción</th>
+            <th>Imagen</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of filteredProducts">
+            <td>#{{ p.id }}</td>
+            <td style="font-weight: 600; color: #1e293b;">{{ p.name }}</td>
+            <td>{{ p.brand || 'N/A' }}</td>
+            <td style="color: #10b981; font-weight: bold;">${{ p.price }}</td>
+            <td>
+              <span class="stock-badge" [ngClass]="{'low-stock': p.stock <= 5}">
+                {{ p.stock }}
+              </span>
+            </td>
+            <td>{{ p.unit }}</td>
+            <td>{{ p.description || 'N/A' }}</td>
+            <!-- Y dentro del *ngFor de la tabla: -->
+            <td>
+              <img [src]="p.image_url || 'https://via.placeholder.com/40?text=Sin+Foto'"
+                style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;" alt="Prod">
+            </td>
+            <td class="text-center">
+              <div class="action-buttons">
+                <ion-button fill="clear" size="small" color="primary" (click)="openEditModal(p)" title="Editar">
+                  <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" size="small" color="danger" (click)="confirmDelete(p)" title="Eliminar">
+                  <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Botón flotante para agregar nuevo producto -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed" style="margin-bottom: 20px; margin-right: 20px;">
+    <ion-fab-button (click)="openAddModal()" class="fab-custom">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+<ion-alert
+  [isOpen]="isAlertOpen"
+  mode="ios"
+  header="¿Estás seguro?"
+  message="Esta acción eliminará el producto permanentemente de la base de datos."
+  [buttons]="alertButtons"
+  (didDismiss)="isAlertOpen = false">
+</ion-alert>
+</ion-content>

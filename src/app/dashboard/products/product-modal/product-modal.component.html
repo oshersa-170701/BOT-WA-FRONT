@@ -1,0 +1,73 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="modal-toolbar">
+    <ion-title style="font-weight: 800; color: #ffffff;">
+      {{ isEditing ? 'Editar Producto' : 'Nuevo Producto' }}
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()" class="close-btn">X</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding modal-background">
+  <div class="modal-wrapper">
+
+    <div class="modal-card">
+      
+      <ion-item fill="solid" class="mb-3">
+        <ion-input name="productName" label="Nombre del producto" labelPlacement="stacked" [(ngModel)]="formData.name" placeholder="Ej. Cemento Cruz Azul 50kg"></ion-input>
+      </ion-item>
+
+      <ion-item fill="solid" class="mb-3">
+        <ion-input name="productBrand" label="Marca" labelPlacement="stacked" [(ngModel)]="formData.brand" placeholder="Ej. Cruz Azul"></ion-input>
+      </ion-item>
+
+      <ion-row>
+        <ion-col size="6">
+          <ion-item fill="solid" class="mb-3">
+            <ion-input name="productPrice" label="Precio ($)" labelPlacement="stacked" type="number" [(ngModel)]="formData.price" placeholder="0.00"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="6">
+          <ion-item fill="solid" class="mb-3">
+            <ion-input name="productStock" label="Stock" labelPlacement="stacked" type="number" [(ngModel)]="formData.stock" placeholder="0"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="6">
+          <ion-item fill="solid" class="mb-3">
+            <ion-input name="productUnit" label="Unidad de medida" labelPlacement="stacked" [(ngModel)]="formData.unit" placeholder="pza, kg, lt, etc."></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="6">
+          <ion-item fill="solid" class="mb-3">
+            <ion-input name="productSku" label="SKU / Código" labelPlacement="stacked" [(ngModel)]="formData.sku" placeholder="Código único"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <!-- Campo de URL de Imagen -->
+      <ion-item fill="solid" class="mb-3">
+        <ion-input name="productImageUrl" label="URL de la Imagen" labelPlacement="stacked" [(ngModel)]="formData.image_url" placeholder="https://ejemplo.com/producto.jpg"></ion-input>
+      </ion-item>
+
+      <!-- Vista previa de la imagen -->
+      <div *ngIf="formData.image_url" class="image-preview-box">
+        <p>Vista previa:</p>
+        <img [src]="formData.image_url" alt="Preview" onerror="this.src='https://via.placeholder.com/100?text=Error+URL'">
+      </div>
+
+      <ion-item fill="solid" class="mb-4">
+        <ion-textarea name="productDescription" label="Descripción" labelPlacement="stacked" [(ngModel)]="formData.description" placeholder="Detalles o características del producto..."></ion-textarea>
+      </ion-item>
+
+      <ion-button expand="block" shape="round" class="primary-btn" (click)="save()">
+        {{ isEditing ? 'Guardar Cambios' : 'Registrar Producto' }}
+      </ion-button>
+
+    </div>
+
+  </div>
+</ion-content>

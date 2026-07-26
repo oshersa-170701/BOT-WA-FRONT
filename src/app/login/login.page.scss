@@ -1,0 +1,94 @@
+// Forzamos que esta vista ignore los cambios agresivos del modo oscuro global
+:host {
+  --ion-background-color: #0f172a;
+}
+
+.login-background {
+  --background: linear-gradient(135deg, #090d16 0%, #1e1b4b 100%) !important;
+}
+
+.login-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 25px;
+
+  .icon-glow {
+    display: inline-flex;
+    padding: 16px;
+    background: rgba(124, 58, 237, 0.2);
+    border-radius: 50%;
+    margin-bottom: 12px;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
+
+    ion-icon {
+      font-size: 48px;
+      color: #a78bfa;
+    }
+  }
+
+  h2 {
+    font-weight: 800;
+    color: #ffffff;
+    font-size: 26px;
+    margin: 0;
+  }
+
+  p {
+    color: #cbd5e1;
+    font-size: 14px;
+    margin-top: 6px;
+  }
+}
+
+.login-card {
+  width: 100%;
+  padding: 24px;
+  background: #ffffff !important; // Forzamos fondo blanco en la tarjeta siempre
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  border-radius: 16px;
+  margin-bottom: 20px;
+
+  // Forzamos los estilos de los items para que el modo oscuro no los oscurezca
+  .custom-item {
+    --background: #f8fafc !important;
+    background: #f8fafc !important;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    border: 1px solid #e2e8f0;
+    padding-left: 8px;
+    color: #1e293b !important;
+
+    ion-input {
+      --color: #1e293b !important;
+      --placeholder-color: #94a3b8 !important;
+    }
+  }
+}
+
+.login-btn {
+  margin-top: 10px;
+  height: 50px;
+  font-weight: bold;
+  font-size: 16px;
+  --background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%) !important;
+  --box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5);
+  color: #ffffff !important;
+}
+
+.login-footer {
+  text-align: center;
+  p {
+    color: #94a3b8;
+    font-size: 12px;
+  }
+}

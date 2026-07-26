@@ -1,0 +1,199 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { 
+  IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, 
+  IonIcon, IonCard, IonItem, IonInput, IonTextarea, IonSelect, IonSelectOption, ToastController, IonSpinner 
+} from '@ionic/angular/standalone';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { addIcons } from 'ionicons';
+import { arrowBackOutline, saveOutline, keyOutline, settingsOutline, trashOutline, addOutline, qrCodeOutline, refreshOutline, logOutOutline } from 'ionicons/icons';
+
+@Component({
+  selector: 'app-settings',
+  templateUrl: './settings.page.html',
+  styleUrls: ['./settings.page.scss'],
+  standalone: true,
+  imports: [
+    IonSpinner, CommonModule, FormsModule, RouterLink, HttpClientModule,
+    IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, 
+    IonIcon, IonCard, IonItem, IonInput, IonTextarea, IonSelect, IonSelectOption
+  ]
+})
+export class SettingsPage implements OnInit {
+  settingsApi = 'http://localhost:3000/bot-settings';
+  keywordsApi = 'http://localhost:3000/bot-keywords';
+  whatsappApi = 'http://localhost:3000/whatsapp';
+
+  whatsappPhone: string = '';
+
+  botSetting = {
+    bot_name: 'Bot Asistente',
+    welcome_message: '',
+    fallback_message: ''
+  };
+
+  keywords: any[] = [];
+  
+  newKeyword = {
+    keyword: '',
+    match_type: 'contains',
+    response_type: 'product_search',
+    reply_text: '',
+    is_active: true
+  };
+
+  qrCodeImage: string | null = null;
+  botStatus: string = 'Desconectado';
+  isLoadingQr: boolean = false;
+  isDisconnecting: boolean = false;
+  
+  // Nuevos estados de carga para mejorar la experiencia de usuario
+  isLoadingSettings: boolean = false;
+  isLoadingKeyword: boolean = false;
+
+  constructor(
+    private http: HttpClient,
+    private toastController: ToastController
+  ) {
+    addIcons({arrowBackOutline,settingsOutline,saveOutline,qrCodeOutline,refreshOutline,logOutOutline,keyOutline,addOutline,trashOutline});
+  }
+
+  ngOnInit() {
+    const loggedUser = localStorage.getItem('user');
+    if (loggedUser) {
+      const userObj = JSON.parse(loggedUser);
+      this.whatsappPhone = userObj.whatsapp_phone || ''; 
+    }
+
+    if (this.whatsappPhone) {
+      this.loadSettings();
+      this.loadKeywords();
+    } else {
+      this.showToast('No se encontró un número de WhatsApp vinculado a este usuario', 'warning');
+    }
+  }
+
+  loadSettings() {
+    this.http.get<any>(`${this.settingsApi}/${this.whatsappPhone}`).subscribe({
+      next: (data) => {
+        if (data) this.botSetting = data;
+      },
+    });
+  }
+
+  loadKeywords() {
+    this.http.get<any[]>(`${this.keywordsApi}/user/${this.whatsappPhone}`).subscribe({
+      next: (data) => {
+        this.keywords = data;
+      },
+    });
+  }
+
+  saveSettings() {
+    this.isLoadingSettings = true;
+    this.http.patch(`${this.settingsApi}/${this.whatsappPhone}`, this.botSetting).subscribe({
+      next: () => {
+        this.isLoadingSettings = false;
+        this.showToast('Configuración del bot guardada exitosamente', 'success');
+      },
+      error: () => {
+        this.http.post(`${this.settingsApi}/${this.whatsappPhone}`, this.botSetting).subscribe({
+          next: () => {
+            this.isLoadingSettings = false;
+            this.showToast('Configuración creada exitosamente', 'success');
+          },
+          error: () => {
+            this.isLoadingSettings = false;
+            this.showToast('Error al guardar la configuración', 'danger');
+          }
+        });
+      }
+    });
+  }
+
+  addKeyword() {
+    if (!this.newKeyword.keyword) {
+      this.showToast('Escribe una palabra clave', 'warning');
+      return;
+    }
+
+    this.isLoadingKeyword = true;
+    this.http.post(`${this.keywordsApi}/${this.whatsappPhone}`, this.newKeyword).subscribe({
+      next: () => {
+        this.isLoadingKeyword = false;
+        this.showToast('Palabra clave agregada', 'success');
+        this.newKeyword.keyword = '';
+        this.newKeyword.reply_text = '';
+        this.loadKeywords();
+      },
+      error: () => {
+        this.isLoadingKeyword = false;
+        this.showToast('Error al agregar la palabra clave (puede que ya exista)', 'danger');
+      }
+    });
+  }
+
+  deleteKeyword(id: number) {
+    this.http.delete(`${this.keywordsApi}/${id}`).subscribe({
+      next: () => {
+        this.showToast('Palabra clave eliminada', 'success');
+        this.loadKeywords();
+      },
+      error: () => this.showToast('Error al eliminar', 'danger')
+    });
+  }
+
+  generateWhatsAppQR() {
+    this.isLoadingQr = true;
+    this.botStatus = 'Generando código QR...';
+
+    this.http.get<any>(`${this.whatsappApi}/qr/${this.whatsappPhone}`).subscribe({
+      next: (res) => {
+        this.isLoadingQr = false;
+        if (res && res.qr) {
+          this.qrCodeImage = res.qr;
+          this.botStatus = 'Escanea el código QR con tu WhatsApp';
+        } else {
+          this.botStatus = 'Conectado / Sesión Activa';
+        }
+      },
+      error: () => {
+        this.isLoadingQr = false;
+        this.botStatus = 'Error al conectar con WhatsApp';
+        this.showToast('No se pudo obtener el código QR del servidor', 'danger');
+      }
+    });
+  }
+
+  disconnectWhatsApp() {
+    this.isDisconnecting = true;
+    this.botStatus = 'Cerrando sesión y limpiando sistema...';
+
+    this.http.post(`${this.whatsappApi}/disconnect/${this.whatsappPhone}`, {}).subscribe({
+      next: () => {
+        this.isDisconnecting = false;
+        this.qrCodeImage = null;
+        this.botStatus = 'Desconectado / Haz clic en Conectar';
+        this.showToast('Sesión de WhatsApp cerrada correctamente', 'success');
+      },
+      error: () => {
+        this.isDisconnecting = false;
+        this.qrCodeImage = null;
+        this.botStatus = 'Desconectado / Haz clic en Conectar';
+        this.showToast('Sesión reiniciada con éxito', 'success');
+      }
+    });
+  }
+
+  async showToast(message: string, color: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2500,
+      color,
+      position: 'top'
+    });
+    await toast.present();
+  }
+}
