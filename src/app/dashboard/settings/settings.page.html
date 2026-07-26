@@ -18,7 +18,7 @@
 
 <ion-content class="ion-padding settings-background">
   <div class="settings-wrapper">
-<!-- Tarjeta 1: Ajustes Generales -->
+    <!-- Tarjeta 1: Ajustes Generales -->
     <ion-card class="custom-card">
       <div class="card-header-title">
         <ion-icon name="settings-outline"></ion-icon>
@@ -36,7 +36,6 @@
       </ion-item>
 
       <!-- Toggle de Bot Automático -->
-     <!-- Toggle corregido y blindado para Ionic/Angular Standalone -->
       <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
         <div style="display: flex; flex-direction: column;">
           <span style="font-weight: 700; color: #1e293b; font-size: 14px;">Activar Bot Automático</span>
@@ -44,6 +43,7 @@
         </div>
         <ion-toggle [checked]="botSetting.is_bot_active" (ionChange)="botSetting.is_bot_active = $event.detail.checked" color="primary" style="transform: scale(1.1);"></ion-toggle>
       </div>
+
       <!-- Horas de Inicio y Cierre -->
       <div style="display: flex; gap: 10px;" class="mb-3">
         <ion-item fill="solid" style="flex: 1;">
@@ -72,11 +72,16 @@
 
       <ion-button expand="block" shape="round" class="primary-btn" [disabled]="isLoadingSettings"
         (click)="saveSettings()">
-        <ion-spinner name="crescent" *ngIf="isLoadingSettings" style="margin-right: 8px;"></ion-spinner>
-        <ion-icon name="save-outline" slot="start" *ngIf="!isLoadingSettings"></ion-icon>
+        @if (isLoadingSettings) {
+          <ion-spinner name="crescent" style="margin-right: 8px;"></ion-spinner>
+        }
+        @if (!isLoadingSettings) {
+          <ion-icon name="save-outline" slot="start"></ion-icon>
+        }
         {{ isLoadingSettings ? 'Guardando ajustes...' : 'Guardar Ajustes' }}
       </ion-button>
     </ion-card>
+
     <!-- Tarjeta 2: Conexión de WhatsApp y Código QR -->
     <ion-card class="custom-card">
       <div class="card-header-title">
@@ -88,8 +93,7 @@
         Genera y escanea el código QR para vincular el número de teléfono con el bot automatizado en tu backend.
       </p>
 
-      <div
-        style="text-align: center; background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px dashed #cbd5e1; margin-bottom: 20px;">
+      <div style="text-align: center; background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px dashed #cbd5e1; margin-bottom: 20px;">
 
         <!-- Estado de la conexión -->
         <p style="font-weight: 700; color: #475569; margin-bottom: 14px; font-size: 14px;">
@@ -97,39 +101,48 @@
         </p>
 
         <!-- Indicador visual de carga al generar QR -->
-        <div *ngIf="isLoadingQr" style="padding: 25px; color: #7c3aed; font-weight: bold;">
-          <ion-spinner name="crescent" style="vertical-align: middle; margin-right: 8px;"></ion-spinner>
-          Generando código QR en el servidor...
-        </div>
+        @if (isLoadingQr) {
+          <div style="padding: 25px; color: #7c3aed; font-weight: bold;">
+            <ion-spinner name="crescent" style="vertical-align: middle; margin-right: 8px;"></ion-spinner>
+            Generando código QR en el servidor...
+          </div>
+        }
 
         <!-- Indicador visual de carga al desconectar -->
-        <div *ngIf="isDisconnecting" style="padding: 25px; color: #ef4444; font-weight: bold;">
-          <ion-spinner name="crescent" style="vertical-align: middle; margin-right: 8px;"></ion-spinner>
-          Cerrando sesión y liberando recursos...
-        </div>
+        @if (isDisconnecting) {
+          <div style="padding: 25px; color: #ef4444; font-weight: bold;">
+            <ion-spinner name="crescent" style="vertical-align: middle; margin-right: 8px;"></ion-spinner>
+            Cerrando sesión y liberando recursos...
+          </div>
+        }
 
         <!-- Contenedor del código QR -->
-        <div *ngIf="qrCodeImage && !isLoadingQr && !isDisconnecting" style="margin-bottom: 15px;">
-          <img [src]="qrCodeImage" alt="WhatsApp QR Code"
-            style="max-width: 220px; border-radius: 10px; border: 4px solid #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-        </div>
+        @if (qrCodeImage && !isLoadingQr && !isDisconnecting) {
+          <div style="margin-bottom: 15px;">
+            <img [src]="qrCodeImage" alt="WhatsApp QR Code"
+              style="max-width: 220px; border-radius: 10px; border: 4px solid #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+          </div>
+        }
 
         <!-- Botón para Conectar / Generar QR -->
-        <ion-button *ngIf="!qrCodeImage" expand="block" shape="round" [disabled]="isLoadingQr || isDisconnecting"
-          (click)="generateWhatsAppQR()" style="font-weight: bold; margin-bottom: 10px;" class="primary-btn">
-          <ion-icon name="refresh-outline" slot="start"></ion-icon>
-          {{ isLoadingQr ? 'Generando...' : 'Conectar WhatsApp (Generar QR)' }}
-        </ion-button>
+        @if (!qrCodeImage) {
+          <ion-button expand="block" shape="round" [disabled]="isLoadingQr || isDisconnecting"
+            (click)="generateWhatsAppQR()" style="font-weight: bold; margin-bottom: 10px;" class="primary-btn">
+            <ion-icon name="refresh-outline" slot="start"></ion-icon>
+            {{ isLoadingQr ? 'Generando...' : 'Conectar WhatsApp (Generar QR)' }}
+          </ion-button>
+        }
 
         <!-- Botón para Desconectar -->
         <ion-button expand="block" shape="round" [disabled]="isLoadingQr || isDisconnecting"
-          (click)="disconnectWhatsApp()" style="font-weight: bold; " class="danger-btn">
+          (click)="disconnectWhatsApp()" style="font-weight: bold;" class="danger-btn">
           <ion-icon name="log-out-outline" slot="start"></ion-icon>
           {{ isDisconnecting ? 'Desconectando...' : 'Desconectar / Cerrar Sesión' }}
         </ion-button>
 
       </div>
     </ion-card>
+
     <!-- Tarjeta 3: Gestión de Palabras Clave -->
     <ion-card class="custom-card">
       <div class="card-header-title">
@@ -138,8 +151,7 @@
       </div>
 
       <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">
-        Configura qué debe responder el bot cuando el cliente escriba términos específicos (ej. "precio", "catálogo",
-        "hola").
+        Configura qué debe responder el bot cuando el cliente escriba términos específicos (ej. "precio", "catálogo", "hola").
       </p>
 
       <!-- Formulario para nueva regla -->
@@ -157,15 +169,21 @@
           </ion-select>
         </ion-item>
 
-        <ion-item fill="solid" class="mb-3" *ngIf="newKeyword.response_type === 'text'">
-          <ion-textarea name="replyText" label="Texto de Respuesta" labelPlacement="stacked"
-            [(ngModel)]="newKeyword.reply_text" placeholder="Escribe la respuesta del bot..."></ion-textarea>
-        </ion-item>
+        @if (newKeyword.response_type === 'text') {
+          <ion-item fill="solid" class="mb-3">
+            <ion-textarea name="replyText" label="Texto de Respuesta" labelPlacement="stacked"
+              [(ngModel)]="newKeyword.reply_text" placeholder="Escribe la respuesta del bot..."></ion-textarea>
+          </ion-item>
+        }
 
         <ion-button expand="block" shape="round" [disabled]="isLoadingKeyword" (click)="addKeyword()"
           class="primary-btn">
-          <ion-spinner name="crescent" *ngIf="isLoadingKeyword" style="margin-right: 8px;"></ion-spinner>
-          <ion-icon name="add-outline" slot="start" *ngIf="!isLoadingKeyword"></ion-icon>
+          @if (isLoadingKeyword) {
+            <ion-spinner name="crescent" style="margin-right: 8px;"></ion-spinner>
+          }
+          @if (!isLoadingKeyword) {
+            <ion-icon name="add-outline" slot="start"></ion-icon>
+          }
           {{ isLoadingKeyword ? 'Agregando regla...' : 'Agregar Palabra Clave' }}
         </ion-button>
       </div>
@@ -174,19 +192,23 @@
       <div style="margin-top: 25px;">
         <h4 style="font-size: 15px; font-weight: bold; color: #1e293b; margin-bottom: 12px;">Reglas Activas</h4>
 
-        <div *ngIf="keywords.length === 0" style="text-align: center; color: #94a3b8; padding: 20px;">
-          No hay palabras clave configuradas.
-        </div>
-
-        <div class="keyword-item" *ngFor="let k of keywords">
-          <div>
-            <span class="kw-badge">{{ k.keyword }}</span>
-            <span style="font-size: 12px; color: #64748b; margin-left: 8px;">({{ k.response_type }})</span>
+        @if (keywords.length === 0) {
+          <div style="text-align: center; color: #94a3b8; padding: 20px;">
+            No hay palabras clave configuradas.
           </div>
-          <ion-button fill="clear" color="danger" size="small" (click)="deleteKeyword(k.id)">
-            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-          </ion-button>
-        </div>
+        }
+
+        @for (k of keywords; track k.id) {
+          <div class="keyword-item">
+            <div>
+              <span class="kw-badge">{{ k.keyword }}</span>
+              <span style="font-size: 12px; color: #64748b; margin-left: 8px;">({{ k.response_type }})</span>
+            </div>
+            <ion-button fill="clear" color="danger" size="small" (click)="deleteKeyword(k.id)">
+              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+        }
       </div>
 
     </ion-card>

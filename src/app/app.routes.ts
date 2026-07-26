@@ -25,5 +25,15 @@ export const routes: Routes = [
     path: 'dashboard/settings',
     loadComponent: () => import('./dashboard/settings/settings.page').then(m => m.SettingsPage),
     canActivate: [authGuard] // Protegido
+  },
+  {
+    path: 'dashboard/quotes',
+    loadComponent: () => import('./dashboard/quotes/quotes.page').then( m => m.QuotesPage),
+    canActivate: [authGuard] // Protegido
+  },
+  {
+    path: 'dashboard/leads',
+    loadComponent: () => import('./dashboard/leads/leads.page').then( m => m.LeadsPage),
+    canActivate: [authGuard] // Protegido
   }
 ];

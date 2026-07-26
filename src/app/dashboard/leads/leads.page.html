@@ -1,0 +1,78 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="leads-toolbar">
+    <ion-buttons slot="start">
+      <ion-button routerLink="/dashboard" class="back-btn">
+        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title class="ion-text-center" style="font-weight: 800; color: #ffffff;">
+      Gestión de Leads y Asesores
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding leads-background">
+  <div class="table-container">
+
+    @if (leads.length === 0) {
+      <div class="empty-state">
+        <ion-icon name="people-outline"></ion-icon>
+        <p>No hay leads ni contactos registrados por el momento.</p>
+      </div>
+    }
+
+    <!-- Tabla de Leads moderna -->
+    @if (leads.length > 0) {
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Cliente / Asesor</th>
+              <th>Empresa</th>
+              <th>Teléfono</th>
+              <th>Estatus</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (l of leads; track l.id) {
+              <tr>
+                <td>#{{ l.id }}</td>
+                <td style="font-weight: 600; color: #1e293b;">{{ l.client_name || 'Sin registrar' }}</td>
+                <td>{{ l.company_name || 'N/A' }}</td>
+                <td style="color: #64748b;">{{ l.client_phone }}</td>
+                <td>
+                  <span class="status-badge" [ngClass]="{
+                    'assigned-status': l.conversation_state === 'assigned_to_human',
+                    'collecting-status': l.conversation_state !== 'assigned_to_human'
+                  }">
+                    {{ l.conversation_state === 'assigned_to_human' ? 'Atendido por Humano' : 'En Proceso' }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <div class="action-buttons">
+                    <ion-button fill="clear" size="small" color="danger" (click)="confirmDelete(l.id)" title="Eliminar">
+                      <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                    </ion-button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+  </div>
+
+  <ion-alert
+    [isOpen]="isAlertOpen"
+    mode="ios"
+    header="¿Estás seguro?"
+    message="Este lead se eliminará permanentemente de la base de datos."
+    [buttons]="alertButtons"
+    (didDismiss)="isAlertOpen = false">
+  </ion-alert>
+</ion-content>

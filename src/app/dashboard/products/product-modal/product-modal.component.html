@@ -54,10 +54,12 @@
       </ion-item>
 
       <!-- Vista previa de la imagen -->
-      <div *ngIf="formData.image_url" class="image-preview-box">
-        <p>Vista previa:</p>
-        <img [src]="formData.image_url" alt="Preview" onerror="this.src='https://via.placeholder.com/100?text=Error+URL'">
-      </div>
+      @if (formData.image_url) {
+        <div class="image-preview-box">
+          <p>Vista previa:</p>
+          <img [src]="formData.image_url" alt="Preview" onerror="this.src='https://via.placeholder.com/100?text=Error+URL'">
+        </div>
+      }
 
       <ion-item fill="solid" class="mb-4">
         <ion-textarea name="productDescription" label="Descripción" labelPlacement="stacked" [(ngModel)]="formData.description" placeholder="Detalles o características del producto..."></ion-textarea>

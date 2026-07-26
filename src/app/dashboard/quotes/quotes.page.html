@@ -1,0 +1,75 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="quotes-toolbar">
+    <ion-buttons slot="start">
+      <ion-button routerLink="/dashboard" class="back-btn">
+        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title class="ion-text-center" style="font-weight: 800; color: #ffffff;">
+      Gestión de Cotizaciones
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding quotes-background">
+  <div class="table-container">
+
+    @if (quotes.length === 0) {
+      <div class="empty-state">
+        <ion-icon name="document-text-outline"></ion-icon>
+        <p>No se encontraron cotizaciones registradas.</p>
+      </div>
+    }
+
+    <!-- Tabla de cotizaciones moderna -->
+    @if (quotes.length > 0) {
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Cliente</th>
+              <th>Teléfono</th>
+              <th>Productos / Solicitud</th>
+              <th>Estatus</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (q of quotes; track q.id) {
+              <tr>
+                <td>#{{ q.id }}</td>
+                <td style="font-weight: 600; color: #1e293b;">{{ q.client_name }}</td>
+                <td style="color: #64748b;">{{ q.client_phone }}</td>
+                <td style="color: #334155; max-width: 250px;">{{ q.products_requested }}</td>
+                <td>
+                  <span class="status-badge" [ngClass]="{'pending-status': q.status === 'Pendiente', 'resolved-status': q.status !== 'Pendiente'}">
+                    {{ q.status }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <div class="action-buttons">
+                    <ion-button fill="clear" size="small" color="danger" (click)="confirmDelete(q.id)" title="Eliminar">
+                      <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                    </ion-button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+  </div>
+
+  <ion-alert
+    [isOpen]="isAlertOpen"
+    mode="ios"
+    header="¿Estás seguro?"
+    message="Esta cotización se eliminará permanentemente de la base de datos."
+    [buttons]="alertButtons"
+    (didDismiss)="isAlertOpen = false">
+  </ion-alert>
+</ion-content>
