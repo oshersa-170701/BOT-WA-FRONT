@@ -39,9 +39,9 @@ botSetting = {
 
   keywords: any[] = [];
   
-  newKeyword = {
+ newKeyword = {
     keyword: '',
-    match_type: 'contains',
+    match_type: 'contains', // <-- Asegurar tipo por defecto
     response_type: 'product_search',
     reply_text: '',
     is_active: true

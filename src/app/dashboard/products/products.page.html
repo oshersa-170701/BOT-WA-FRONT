@@ -10,10 +10,16 @@
       Gestión de Productos
     </ion-title>
 
-    <ion-buttons slot="end" style="visibility: hidden;">
-      <ion-button></ion-button>
+    <!-- Botón para subir Excel -->
+    <ion-buttons slot="end">
+      <ion-button (click)="fileInput.click()" title="Subir Catálogo en Excel" style="color: #ffffff;">
+        <ion-icon name="cloud-upload-outline" slot="icon-only"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
+
+  <!-- Input de archivo oculto para dispararlo con el botón -->
+  <input type="file" #fileInput style="display: none" accept=".xlsx, .xls, .csv" (change)="onFileSelected($event)">
 
   <!-- Barra de búsqueda -->
   <ion-toolbar class="search-toolbar">
@@ -32,13 +38,14 @@
     </div>
 
     <!-- Tabla de productos moderna -->
-    <div class="table-responsive" *ngIf="filteredProducts.length > 0">
+    <div class="table-responsive" *ngIf="paginatedProducts.length > 0">
       <table class="custom-table">
         <thead>
           <tr>
             <th>ID</th>
             <th>Nombre</th>
             <th>Marca</th>
+            <th>Categoria</th>
             <th>Precio</th>
             <th>Stock</th>
             <th>Unidad</th>
@@ -48,10 +55,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let p of filteredProducts">
+          <tr *ngFor="let p of paginatedProducts">
             <td>#{{ p.id }}</td>
             <td style="font-weight: 600; color: #1e293b;">{{ p.name }}</td>
             <td>{{ p.brand || 'N/A' }}</td>
+            <td>{{ p.category || 'N/A' }}</td>
             <td style="color: #10b981; font-weight: bold;">${{ p.price }}</td>
             <td>
               <span class="stock-badge" [ngClass]="{'low-stock': p.stock <= 5}">
@@ -60,7 +68,6 @@
             </td>
             <td>{{ p.unit }}</td>
             <td>{{ p.description || 'N/A' }}</td>
-            <!-- Y dentro del *ngFor de la tabla: -->
             <td>
               <img [src]="p.image_url || 'https://via.placeholder.com/40?text=Sin+Foto'"
                 style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;" alt="Prod">
@@ -78,9 +85,24 @@
           </tr>
         </tbody>
       </table>
+
+      <!-- Controles de Paginación Elegantes -->
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 8px; background: #ffffff; border-top: 1px solid #e2e8f0; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+        <ion-button size="small" fill="outline" (click)="prevPage()" [disabled]="currentPage === 1">
+          Anterior
+        </ion-button>
+        
+        <span style="font-size: 13px; font-weight: 600; color: #64748b;">
+          Página {{ currentPage }} de {{ totalPages }}
+        </span>
+
+        <ion-button size="small" fill="outline" (click)="nextPage()" [disabled]="currentPage >= totalPages">
+          Siguiente
+        </ion-button>
+      </div>
     </div>
 
-  </div>
+  </div> <!-- Cierre correcto de table-container -->
 
   <!-- Botón flotante para agregar nuevo producto -->
   <ion-fab vertical="bottom" horizontal="end" slot="fixed" style="margin-bottom: 20px; margin-right: 20px;">
@@ -88,12 +110,13 @@
       <ion-icon name="add-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-<ion-alert
-  [isOpen]="isAlertOpen"
-  mode="ios"
-  header="¿Estás seguro?"
-  message="Esta acción eliminará el producto permanentemente de la base de datos."
-  [buttons]="alertButtons"
-  (didDismiss)="isAlertOpen = false">
-</ion-alert>
+
+  <ion-alert
+    [isOpen]="isAlertOpen"
+    mode="ios"
+    header="¿Estás seguro?"
+    message="Esta acción eliminará el producto permanentemente de la base de datos."
+    [buttons]="alertButtons"
+    (didDismiss)="isAlertOpen = false">
+  </ion-alert>
 </ion-content>

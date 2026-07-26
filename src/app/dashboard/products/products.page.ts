@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { 
   IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, 
-  IonIcon, IonSearchbar, IonFab, IonFabButton, IonAlert, ToastController, LoadingController, ModalController 
+  IonIcon, IonSearchbar, IonFab, IonFabButton, IonAlert, ToastController, LoadingController, ModalController, 
+  AlertController
 } from '@ionic/angular/standalone';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { addIcons } from 'ionicons';
-import { arrowBackOutline, addOutline, createOutline, trashOutline, cubeOutline } from 'ionicons/icons';
+import { arrowBackOutline, addOutline, createOutline, trashOutline, cubeOutline, cloudUploadOutline } from 'ionicons/icons';
 import { ProductModalComponent } from './product-modal/product-modal.component';
 
 @Component({
@@ -27,7 +28,12 @@ export class ProductsPage implements OnInit {
   products: any[] = [];
   filteredProducts: any[] = [];
   searchTerm: string = '';
-  
+  whatsappPhone: string = ''; // <-- Declaramos la variable que faltaba
+  // Nuevas variables de paginación
+  currentPage: number = 1;
+  pageSize: number = 10; // 10 productos por página
+  totalPages: number = 1;
+  paginatedProducts: any[] = [];
   isAlertOpen = false;
   productToDelete: any = null;
   alertButtons = [
@@ -39,23 +45,37 @@ export class ProductsPage implements OnInit {
     private http: HttpClient,
     private toastController: ToastController,
     private loadingController: LoadingController,
-    private modalController: ModalController // <-- Inyección correcta aquí
+    private modalController: ModalController,
+    private alertController: AlertController
   ) {
-    addIcons({ arrowBackOutline, addOutline, createOutline, trashOutline, cubeOutline });
+    addIcons({ arrowBackOutline, addOutline, createOutline, trashOutline, cubeOutline, cloudUploadOutline });
   }
 
   ngOnInit() {
+    // Recuperamos el teléfono del usuario logueado tal como en el settings
+    const loggedUser = localStorage.getItem('user');
+    if (loggedUser) {
+      const userObj = JSON.parse(loggedUser);
+      this.whatsappPhone = userObj.whatsapp_phone || ''; 
+    }
+
     this.loadProducts();
   }
 
-  async loadProducts() {
+async loadProducts() {
     const loading = await this.loadingController.create({ message: 'Cargando productos...', spinner: 'crescent' });
     await loading.present();
 
-    this.http.get<any[]>(this.apiUrl).subscribe({
+    const url = this.whatsappPhone ? `${this.apiUrl}/user/${this.whatsappPhone}` : this.apiUrl;
+
+    this.http.get<any[]>(url).subscribe({
       next: (data) => {
         this.products = data;
         this.filteredProducts = data;
+        
+        // ¡ESTO ES LO QUE FALTABA! Actualizamos el paginador y la vista
+        this.filterProducts(); 
+
         loading.dismiss();
       },
       error: (err) => {
@@ -63,19 +83,6 @@ export class ProductsPage implements OnInit {
         this.showToast('Aun no se cuenta con productos registrados', 'danger');
       }
     });
-  }
-
-  filterProducts() {
-    const term = this.searchTerm.toLowerCase().trim();
-    if (!term) {
-      this.filteredProducts = this.products;
-    } else {
-      this.filteredProducts = this.products.filter(p => 
-        p.name.toLowerCase().includes(term) || 
-        (p.brand && p.brand.toLowerCase().includes(term)) ||
-        (p.sku && p.sku.toLowerCase().includes(term))
-      );
-    }
   }
 
   async openAddModal() {
@@ -86,13 +93,12 @@ export class ProductsPage implements OnInit {
 
     const { data } = await modal.onWillDismiss();
     if (data) {
-      this.http.post(this.apiUrl, data).subscribe({
+      this.http.post(`${this.apiUrl}/${this.whatsappPhone || '9516493519'}`, data).subscribe({
         next: () => {
-          this.showToast('Producto creado exitosamente 🚀', 'success');
+          this.showToast('Producto creado exitosamente', 'success');
           this.loadProducts();
         },
         error: (err) => {
-         
           this.showToast('Error al crear el producto', 'danger');
         }
       });
@@ -114,7 +120,6 @@ export class ProductsPage implements OnInit {
           this.loadProducts();
         },
         error: (err) => {
-         
           this.showToast('Error al actualizar el producto', 'danger');
         }
       });
@@ -149,5 +154,99 @@ export class ProductsPage implements OnInit {
       position: 'top'
     });
     await toast.present();
+  }
+async onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (!file) return;
+
+    if (!this.whatsappPhone) {
+      this.showToast('No se encontró el teléfono del bot vinculado', 'warning');
+      event.target.value = '';
+      return;
+    }
+
+    // Creamos la alerta de confirmación antes de subir el archivo
+    const alert = await this.alertController.create({
+      header: '¿Confirmar carga masiva?',
+      message: `Estás a punto de importar el archivo "${file.name}". Esto agregará o actualizará los productos en tu catálogo. ¿Deseas continuar?`,
+     mode: 'ios',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+            event.target.value = ''; // Limpiamos el input si cancela
+          }
+        },
+        {
+          text: 'Sí, importar',
+          handler: async () => {
+            const loading = await this.loadingController.create({ 
+              message: 'Importando productos desde Excel...', 
+              spinner: 'crescent' 
+            });
+            await loading.present();
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            this.http.post<any>(`${this.apiUrl}/upload-excel/${this.whatsappPhone}`, formData).subscribe({
+              next: (res) => {
+                loading.dismiss();
+                if (res && res.success) {
+                  this.showToast(res.message, 'success');
+                  this.loadProducts(); 
+                } else {
+                  this.showToast(res.message || 'Error al importar archivo', 'danger');
+                }
+                event.target.value = ''; 
+              },
+              error: () => {
+                loading.dismiss();
+                this.showToast('Error de conexión al subir el Excel', 'danger');
+                event.target.value = '';
+              }
+            });
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+  filterProducts() {
+    const term = this.searchTerm.toLowerCase().trim();
+    let result = this.products;
+
+    if (term) {
+      result = this.products.filter(p => 
+        p.name.toLowerCase().includes(term) || 
+        (p.brand && p.brand.toLowerCase().includes(term)) ||
+        (p.sku && p.sku.toLowerCase().includes(term))
+      );
+    }
+
+    // Calculamos el total de páginas
+    this.totalPages = Math.ceil(result.length / this.pageSize) || 1;
+    if (this.currentPage > this.totalPages) this.currentPage = 1;
+
+    // Cortamos el arreglo según la página actual
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    this.paginatedProducts = result.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  // Métodos para cambiar de página
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.filterProducts();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.filterProducts();
+    }
   }
 }

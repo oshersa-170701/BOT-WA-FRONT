@@ -150,10 +150,10 @@
         </ion-item>
 
         <ion-item fill="solid" class="mb-2">
-          <ion-select name="responseType" label="Tipo de Respuesta" labelPlacement="stacked"
-            [(ngModel)]="newKeyword.response_type">
-            <ion-select-option value="product_search">Buscar en Productos (Catálogo)</ion-select-option>
-            <ion-select-option value="text">Enviar Texto Personalizado</ion-select-option>
+          <ion-select name="matchType" label="Tipo de Coincidencia" labelPlacement="stacked"
+            [(ngModel)]="newKeyword.match_type">
+            <ion-select-option value="contains">Contiene (Flexible)</ion-select-option>
+            <ion-select-option value="exact">Exacta (Estricta)</ion-select-option>
           </ion-select>
         </ion-item>
 
