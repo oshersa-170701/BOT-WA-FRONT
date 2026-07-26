@@ -4,8 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { 
   IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, 
-  IonIcon, IonCard, IonItem, IonInput, IonTextarea, IonSelect, IonSelectOption, ToastController, IonSpinner 
-} from '@ionic/angular/standalone';
+  IonIcon, IonCard, IonItem, IonInput, IonTextarea, IonSelect, IonSelectOption, ToastController, IonSpinner, IonToggle } from '@ionic/angular/standalone';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, saveOutline, keyOutline, settingsOutline, trashOutline, addOutline, qrCodeOutline, refreshOutline, logOutOutline } from 'ionicons/icons';
@@ -15,7 +14,7 @@ import { arrowBackOutline, saveOutline, keyOutline, settingsOutline, trashOutlin
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonToggle, 
     IonSpinner, CommonModule, FormsModule, RouterLink, HttpClientModule,
     IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, 
     IonIcon, IonCard, IonItem, IonInput, IonTextarea, IonSelect, IonSelectOption
@@ -28,10 +27,14 @@ export class SettingsPage implements OnInit {
 
   whatsappPhone: string = '';
 
-  botSetting = {
+botSetting = {
     bot_name: 'Bot Asistente',
     welcome_message: '',
-    fallback_message: ''
+    fallback_message: '',
+    is_bot_active: true,
+    start_time: '08:00',
+    end_time: '18:00',
+    allowed_days: [1, 2, 3, 4, 5] // Por defecto Lunes a Viernes
   };
 
   keywords: any[] = [];
@@ -195,5 +198,20 @@ export class SettingsPage implements OnInit {
       position: 'top'
     });
     await toast.present();
+  }
+  toggleDay(dayValue: number) {
+    if (!this.botSetting.allowed_days) {
+      this.botSetting.allowed_days = [];
+    }
+    const index = this.botSetting.allowed_days.indexOf(dayValue);
+    if (index > -1) {
+      this.botSetting.allowed_days.splice(index, 1);
+    } else {
+      this.botSetting.allowed_days.push(dayValue);
+    }
+  }
+
+  isDaySelected(dayValue: number): boolean {
+    return this.botSetting.allowed_days && this.botSetting.allowed_days.includes(dayValue);
   }
 }

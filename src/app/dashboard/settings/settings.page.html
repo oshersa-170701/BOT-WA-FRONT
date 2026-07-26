@@ -18,8 +18,7 @@
 
 <ion-content class="ion-padding settings-background">
   <div class="settings-wrapper">
-
-    <!-- Tarjeta 1: Ajustes Generales -->
+<!-- Tarjeta 1: Ajustes Generales -->
     <ion-card class="custom-card">
       <div class="card-header-title">
         <ion-icon name="settings-outline"></ion-icon>
@@ -35,6 +34,42 @@
         <ion-textarea name="fallbackMessage" label="Mensaje de Fallback (Cuando no entiende)" labelPlacement="stacked"
           [(ngModel)]="botSetting.fallback_message" placeholder="Lo siento, no entendí tu mensaje..."></ion-textarea>
       </ion-item>
+
+      <!-- Toggle de Bot Automático -->
+     <!-- Toggle corregido y blindado para Ionic/Angular Standalone -->
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div style="display: flex; flex-direction: column;">
+          <span style="font-weight: 700; color: #1e293b; font-size: 14px;">Activar Bot Automático</span>
+          <span style="font-size: 11px; color: #64748b; margin-top: 2px;">Permite que responda por sí mismo</span>
+        </div>
+        <ion-toggle [checked]="botSetting.is_bot_active" (ionChange)="botSetting.is_bot_active = $event.detail.checked" color="primary" style="transform: scale(1.1);"></ion-toggle>
+      </div>
+      <!-- Horas de Inicio y Cierre -->
+      <div style="display: flex; gap: 10px;" class="mb-3">
+        <ion-item fill="solid" style="flex: 1;">
+          <ion-input type="time" label="Hora de Inicio" labelPlacement="stacked" [(ngModel)]="botSetting.start_time"
+            name="startTime"></ion-input>
+        </ion-item>
+        <ion-item fill="solid" style="flex: 1;">
+          <ion-input type="time" label="Hora de Cierre" labelPlacement="stacked" [(ngModel)]="botSetting.end_time"
+            name="endTime"></ion-input>
+        </ion-item>
+      </div>
+
+      <!-- Selector Visual de Días de la Semana -->
+      <div style="margin-bottom: 20px;">
+        <label style="font-size: 13px; font-weight: 700; color: #475569; display: block; margin-bottom: 8px;">Días Laborables del Bot</label>
+        <div style="display: flex; gap: 6px; justify-content: space-between;">
+          <button type="button" (click)="toggleDay(1)" [style.background]="isDaySelected(1) ? '#7c3aed' : '#f1f5f9'" [style.color]="isDaySelected(1) ? '#ffffff' : '#64748b'" style="flex: 1; border: none; border-radius: 8px; padding: 10px 0; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s;">Lun</button>
+          <button type="button" (click)="toggleDay(2)" [style.background]="isDaySelected(2) ? '#7c3aed' : '#f1f5f9'" [style.color]="isDaySelected(2) ? '#ffffff' : '#64748b'" style="flex: 1; border: none; border-radius: 8px; padding: 10px 0; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s;">Mar</button>
+          <button type="button" (click)="toggleDay(3)" [style.background]="isDaySelected(3) ? '#7c3aed' : '#f1f5f9'" [style.color]="isDaySelected(3) ? '#ffffff' : '#64748b'" style="flex: 1; border: none; border-radius: 8px; padding: 10px 0; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s;">Mié</button>
+          <button type="button" (click)="toggleDay(4)" [style.background]="isDaySelected(4) ? '#7c3aed' : '#f1f5f9'" [style.color]="isDaySelected(4) ? '#ffffff' : '#64748b'" style="flex: 1; border: none; border-radius: 8px; padding: 10px 0; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s;">Jue</button>
+          <button type="button" (click)="toggleDay(5)" [style.background]="isDaySelected(5) ? '#7c3aed' : '#f1f5f9'" [style.color]="isDaySelected(5) ? '#ffffff' : '#64748b'" style="flex: 1; border: none; border-radius: 8px; padding: 10px 0; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s;">Vie</button>
+          <button type="button" (click)="toggleDay(6)" [style.background]="isDaySelected(6) ? '#7c3aed' : '#f1f5f9'" [style.color]="isDaySelected(6) ? '#ffffff' : '#64748b'" style="flex: 1; border: none; border-radius: 8px; padding: 10px 0; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s;">Sáb</button>
+          <button type="button" (click)="toggleDay(0)" [style.background]="isDaySelected(0) ? '#7c3aed' : '#f1f5f9'" [style.color]="isDaySelected(0) ? '#ffffff' : '#64748b'" style="flex: 1; border: none; border-radius: 8px; padding: 10px 0; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s;">Dom</button>
+        </div>
+      </div>
+
       <ion-button expand="block" shape="round" class="primary-btn" [disabled]="isLoadingSettings"
         (click)="saveSettings()">
         <ion-spinner name="crescent" *ngIf="isLoadingSettings" style="margin-right: 8px;"></ion-spinner>
@@ -42,7 +77,6 @@
         {{ isLoadingSettings ? 'Guardando ajustes...' : 'Guardar Ajustes' }}
       </ion-button>
     </ion-card>
-
     <!-- Tarjeta 2: Conexión de WhatsApp y Código QR -->
     <ion-card class="custom-card">
       <div class="card-header-title">
