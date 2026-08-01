@@ -9,6 +9,7 @@ import {
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, trashOutline, peopleOutline } from 'ionicons/icons';
+import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-leads',
@@ -22,7 +23,7 @@ import { arrowBackOutline, trashOutline, peopleOutline } from 'ionicons/icons';
   ]
 })
 export class LeadsPage implements OnInit {
-  apiUrl = 'http://localhost:3000/leads';
+  apiUrl = `${environment.apiUrl}/leads`;
   leads: any[] = [];
   whatsappPhone: string = '';
   

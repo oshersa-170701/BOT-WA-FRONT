@@ -11,6 +11,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, addOutline, createOutline, trashOutline, cubeOutline, cloudUploadOutline } from 'ionicons/icons';
 import { ProductModalComponent } from './product-modal/product-modal.component';
+import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-products',
@@ -24,7 +25,7 @@ import { ProductModalComponent } from './product-modal/product-modal.component';
   ]
 })
 export class ProductsPage implements OnInit {
-  apiUrl = 'http://localhost:3000/products';
+  apiUrl = `${environment.apiUrl}/products`;
   products: any[] = [];
   filteredProducts: any[] = [];
   searchTerm: string = '';

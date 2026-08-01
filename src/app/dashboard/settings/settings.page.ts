@@ -8,22 +8,23 @@ import {
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, saveOutline, keyOutline, settingsOutline, trashOutline, addOutline, qrCodeOutline, refreshOutline, logOutOutline, timeOutline, shieldCheckmarkOutline, createOutline, closeOutline } from 'ionicons/icons';
+import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
   standalone: true,
-  imports: [IonNote, IonToggle, 
+  imports: [ IonToggle, 
     IonSpinner, CommonModule, FormsModule, RouterLink, HttpClientModule,
     IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, 
     IonIcon, IonCard, IonItem, IonInput, IonTextarea, IonSelect, IonSelectOption
   ]
 })
 export class SettingsPage implements OnInit {
-  settingsApi = 'http://localhost:3000/bot-settings';
-  keywordsApi = 'http://localhost:3000/bot-keywords';
-  whatsappApi = 'http://localhost:3000/whatsapp';
+  settingsApi = `${environment.apiUrl}/bot-settings`;
+  keywordsApi = `${environment.apiUrl}/bot-keywords`;
+  whatsappApi = `${environment.apiUrl}/whatsapp`;
 
   whatsappPhone: string = '';
 
@@ -215,7 +216,7 @@ export class SettingsPage implements OnInit {
           } else {
             this.isLoadingQr = false;
             this.botStatus = 'Sesión activa detectada';
-            this.showToast('⚠️ El número ya cuenta con una sesión previa. Por favor haz clic en "Desconectar / Cerrar Sesión" e inténtalo de nuevo.', 'danger');
+            this.showToast(' El número ya cuenta con una sesión previa. Por favor haz clic en "Desconectar / Cerrar Sesión" e inténtalo de nuevo.', 'danger');
           }
         },
         error: () => {
@@ -224,7 +225,7 @@ export class SettingsPage implements OnInit {
           } else {
             this.isLoadingQr = false;
             this.botStatus = 'Error al conectar con WhatsApp';
-            this.showToast('⚠️ Desconecta el número de WhatsApp antes de generar un nuevo código QR.', 'danger');
+            this.showToast(' Desconecta el número de WhatsApp antes de generar un nuevo código QR.', 'danger');
           }
         }
       });

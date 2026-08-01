@@ -9,6 +9,7 @@ import {
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { addIcons } from 'ionicons';
 import { arrowBackOutline, trashOutline, documentTextOutline } from 'ionicons/icons';
+import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-quotes',
@@ -22,7 +23,7 @@ import { arrowBackOutline, trashOutline, documentTextOutline } from 'ionicons/ic
   ]
 })
 export class QuotesPage implements OnInit {
-  apiUrl = 'http://localhost:3000/quotes';
+  apiUrl = `${environment.apiUrl}/quotes`;
   quotes: any[] = [];
   whatsappPhone: string = '';
   
