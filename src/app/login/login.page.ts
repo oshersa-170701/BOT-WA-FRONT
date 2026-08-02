@@ -52,35 +52,28 @@ export class LoginPage {
     });
     await loading.present();
 
-    this.authService.getUsers().subscribe({
-      next: async (users) => {
+    // Mandamos el objeto exacto que espera tu backend ({ email, pass })
+    this.authService.login({ email: this.email, pass: this.password }).subscribe({
+      next: async (res: any) => {
         await loading.dismiss();
-        const foundUser = users.find(
-          (u) => u.email === this.email && u.password === this.password
-        );
+        
+        // Guardamos el usuario devuelto por tu @Post('login') de NestJS
+        localStorage.setItem('user', JSON.stringify(res.user || res));
 
-        if (foundUser) {
-          // --- AQUÍ GUARDAMOS EL USUARIO PARA LA ARQUITECTURA MULTI-EMPRESA ---
-          localStorage.setItem('user', JSON.stringify(foundUser));
+        const toast = await this.toastController.create({
+          message: `¡Bienvenido!`,
+          duration: 2000,
+          color: 'success',
+          position: 'top'
+        });
+        await toast.present();
 
-          const toast = await this.toastController.create({
-            message: `¡Bienvenido ${foundUser.name || 'Admin'}!`,
-            duration: 2000,
-            color: 'success',
-            position: 'top'
-          });
-          await toast.present();
-
-          // Redirigimos al dashboard
-          this.router.navigateByUrl('/dashboard', { replaceUrl: true });
-        } else {
-          this.showAlert('Acceso Denegado', 'Correo o contraseña incorrectos.');
-        }
+        this.router.navigateByUrl('/dashboard', { replaceUrl: true });
       },
       error: async (err) => {
         await loading.dismiss();
         console.error(err);
-        this.showAlert('Error', 'No se pudo conectar con el servidor backend.');
+        this.showAlert('Acceso Denegado', 'Correo o contraseña incorrectos.');
       },
     });
   }
