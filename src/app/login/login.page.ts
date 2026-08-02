@@ -53,7 +53,7 @@ export class LoginPage {
     await loading.present();
 
     // Mandamos el objeto exacto que espera tu backend ({ email, pass })
-    this.authService.login({ email: this.email, pass: this.password }).subscribe({
+   this.authService.login({ email: this.email, password: this.password }).subscribe({
       next: async (res: any) => {
         await loading.dismiss();
         
