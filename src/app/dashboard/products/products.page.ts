@@ -29,12 +29,14 @@ export class ProductsPage implements OnInit {
   products: any[] = [];
   filteredProducts: any[] = [];
   searchTerm: string = '';
-  whatsappPhone: string = ''; // <-- Declaramos la variable que faltaba
-  // Nuevas variables de paginación
+  whatsappPhone: string = ''; 
+  
+  // Variables de paginación
   currentPage: number = 1;
-  pageSize: number = 10; // 10 productos por página
+  pageSize: number = 10; 
   totalPages: number = 1;
   paginatedProducts: any[] = [];
+  
   isAlertOpen = false;
   productToDelete: any = null;
   alertButtons = [
@@ -53,7 +55,6 @@ export class ProductsPage implements OnInit {
   }
 
   ngOnInit() {
-    // Recuperamos el teléfono del usuario logueado tal como en el settings
     const loggedUser = localStorage.getItem('user');
     if (loggedUser) {
       const userObj = JSON.parse(loggedUser);
@@ -63,7 +64,7 @@ export class ProductsPage implements OnInit {
     this.loadProducts();
   }
 
-async loadProducts() {
+  async loadProducts() {
     const loading = await this.loadingController.create({ message: 'Cargando productos...', spinner: 'crescent' });
     await loading.present();
 
@@ -71,16 +72,19 @@ async loadProducts() {
 
     this.http.get<any[]>(url).subscribe({
       next: (data) => {
-        this.products = data;
-        this.filteredProducts = data;
+        this.products = data || [];
+        this.filteredProducts = this.products;
         
-        // ¡ESTO ES LO QUE FALTABA! Actualizamos el paginador y la vista
+        // Actualizamos el paginador y la vista de inmediato
         this.filterProducts(); 
 
         loading.dismiss();
       },
       error: (err) => {
         loading.dismiss();
+        this.products = [];
+        this.filteredProducts = [];
+        this.paginatedProducts = [];
         this.showToast('Aun no se cuenta con productos registrados', 'danger');
       }
     });
@@ -94,12 +98,18 @@ async loadProducts() {
 
     const { data } = await modal.onWillDismiss();
     if (data) {
+      const loading = await this.loadingController.create({ message: 'Guardando producto...', spinner: 'crescent' });
+      await loading.present();
+
       this.http.post(`${this.apiUrl}/${this.whatsappPhone || '9516493519'}`, data).subscribe({
         next: () => {
+          loading.dismiss();
           this.showToast('Producto creado exitosamente', 'success');
-          this.loadProducts();
+          this.searchTerm = ''; // Limpiamos la barra de búsqueda para ver el nuevo registro al inicio/fin
+          this.loadProducts();  // Refresco automático de la tabla
         },
         error: (err) => {
+          loading.dismiss();
           this.showToast('Error al crear el producto', 'danger');
         }
       });
@@ -115,12 +125,17 @@ async loadProducts() {
 
     const { data } = await modal.onWillDismiss();
     if (data) {
+      const loading = await this.loadingController.create({ message: 'Actualizando producto...', spinner: 'crescent' });
+      await loading.present();
+
       this.http.patch(`${this.apiUrl}/${product.id}`, data).subscribe({
         next: () => {
+          loading.dismiss();
           this.showToast('Producto actualizado correctamente', 'success');
-          this.loadProducts();
+          this.loadProducts(); // Refresco automático de la tabla reflejando los cambios
         },
         error: (err) => {
+          loading.dismiss();
           this.showToast('Error al actualizar el producto', 'danger');
         }
       });
@@ -156,7 +171,8 @@ async loadProducts() {
     });
     await toast.present();
   }
-async onFileSelected(event: any) {
+
+  async onFileSelected(event: any) {
     const file: File = event.target.files[0];
     if (!file) return;
 
@@ -166,17 +182,16 @@ async onFileSelected(event: any) {
       return;
     }
 
-    // Creamos la alerta de confirmación antes de subir el archivo
     const alert = await this.alertController.create({
       header: '¿Confirmar carga masiva?',
       message: `Estás a punto de importar el archivo "${file.name}". Esto agregará o actualizará los productos en tu catálogo. ¿Deseas continuar?`,
-     mode: 'ios',
+      mode: 'ios',
       buttons: [
         {
           text: 'Cancelar',
           role: 'cancel',
           handler: () => {
-            event.target.value = ''; // Limpiamos el input si cancela
+            event.target.value = ''; 
           }
         },
         {
@@ -196,7 +211,8 @@ async onFileSelected(event: any) {
                 loading.dismiss();
                 if (res && res.success) {
                   this.showToast(res.message, 'success');
-                  this.loadProducts(); 
+                  this.searchTerm = ''; // Limpiamos la barra de búsqueda para reflejar todo el catálogo nuevo
+                  this.loadProducts();  // Refresco automático inmediato de la tabla y paginador
                 } else {
                   this.showToast(res.message || 'Error al importar archivo', 'danger');
                 }
@@ -215,28 +231,26 @@ async onFileSelected(event: any) {
 
     await alert.present();
   }
+
   filterProducts() {
-    const term = this.searchTerm.toLowerCase().trim();
+    const term = this.searchTerm ? this.searchTerm.toLowerCase().trim() : '';
     let result = this.products;
 
     if (term) {
       result = this.products.filter(p => 
-        p.name.toLowerCase().includes(term) || 
+        (p.name && p.name.toLowerCase().includes(term)) || 
         (p.brand && p.brand.toLowerCase().includes(term)) ||
         (p.sku && p.sku.toLowerCase().includes(term))
       );
     }
 
-    // Calculamos el total de páginas
     this.totalPages = Math.ceil(result.length / this.pageSize) || 1;
     if (this.currentPage > this.totalPages) this.currentPage = 1;
 
-    // Cortamos el arreglo según la página actual
     const startIndex = (this.currentPage - 1) * this.pageSize;
     this.paginatedProducts = result.slice(startIndex, startIndex + this.pageSize);
   }
 
-  // Métodos para cambiar de página
   nextPage() {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
