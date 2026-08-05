@@ -9,13 +9,13 @@
       <p>Panel de Control Automatizado para WhatsApp</p>
     </div>
 
-    <!-- SIN FORMULARIO QUE INTERCEPTE EL EVENTO -->
-    <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+    <!-- FORMULARIO CONTROLADO CON ANGULAR -->
+    <form (ngSubmit)="onLogin()" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
       
       <ion-card class="login-card" style="width: 100%;">
         <ion-item class="custom-item" lines="none">
           <ion-icon name="mail-outline" slot="start" color="medium"></ion-icon>
-          <ion-input label="Correo electrónico" labelPlacement="stacked" type="email" [(ngModel)]="email"
+          <ion-input label="Correo electrónico" labelPlacement="stacked" type="email" [(ngModel)]="email" name="email"
             placeholder="admin@ejemplo.com">
           </ion-input>
         </ion-item>
@@ -23,7 +23,7 @@
         <ion-item class="custom-item" lines="none">
           <ion-icon name="lock-closed-outline" slot="start" color="medium"></ion-icon>
           <ion-input [type]="showPassword ? 'text' : 'password'" label="Contraseña" labelPlacement="stacked"
-            [(ngModel)]="password" placeholder="••••••••">
+            [(ngModel)]="password" name="password" placeholder="••••••••">
           </ion-input>
           <ion-button fill="clear" slot="end" type="button" (click)="togglePassword()" style="margin-top: 15px;">
             <ion-icon slot="icon-only" [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"
@@ -32,13 +32,13 @@
         </ion-item>
       </ion-card>
 
-      <!-- BOTÓN DIRECTO LLAMANDO A LA FUNCIÓN, PREVINIENDO CUALQUIER ACCIÓN NATIVA -->
-      <ion-button expand="block" shape="round" class="login-btn ion-margin-top" (click)="onLogin()">
-  Entrar al Dashboard
-  <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
-</ion-button>
+      <!-- BOTÓN CON TIPO SUBMIT PARA DISPARAR EL FORMULARIO -->
+      <ion-button expand="block" shape="round" type="submit" class="login-btn ion-margin-top">
+        Entrar al Dashboard
+        <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+      </ion-button>
 
-    </div>
+    </form>
     
     <div class="login-footer">
       <p>Sistema de Gestión &copy; 2026</p>
