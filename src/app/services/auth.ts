@@ -12,7 +12,7 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   // Obtenemos todos los usuarios para validar el login en este nivel de desarrollo
-  getUsers(): Observable<any[]> {a
+  getUsers(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
   }
   login(credentials: { email: string; password: string }): Observable<any> {
